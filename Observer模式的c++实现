@@ -1,0 +1,59 @@
+class Customer{
+	
+	public:
+		static void attach(Observer *o);
+		static void detach(Observer *o);
+		String getState();
+	private:
+		Vector myObs;
+		void notifyObs();
+}; 
+Customer::attach(Observer *o){
+	myObs.addElement(o);
+}
+Customer::detach(Observer *o){
+	myObs.remove(o);
+}
+Customer::getState(){
+	
+} 
+Customer::notifyObs(){
+	for (Enumeration e=myObs.elements();
+	e.hasMoreElement();){
+		((Observer *) e)->update(this);
+		
+	}
+}
+
+class Observer {
+	public:
+		Observer();
+		void update(Customer *mycust)=0;
+		
+};
+Observer::Observer(){
+	customer.attach(this);
+}
+class AddrVerification : public Observer {
+	public:
+		AddrVerification();
+		void update(Customer *mycust);
+};
+
+AddrVerification::AddrVerification(){
+}
+ AddrVerification::update(Customer *mycust){
+ 	
+ 	
+ }
+
+class WelcomeLetter : public Observer {
+	public:
+		WelcomeLetter();
+		void update( Customer *mycust);
+		
+}; 
+
+WelcomeLetter::update( Customer *mycust){
+	
+}
