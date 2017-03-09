@@ -1,0 +1,97 @@
+#include<iostream>
+using namespace std;
+
+public interface ICommand
+{
+    void Execute();
+    void UndoExecute();
+}
+class BoldCommand : ICommand
+{
+    private Document document;
+    private string previousText;
+    public BoldCommand(Document document)
+    {
+        this.document = document;
+        previousText = this.document.Text;
+    }
+
+    public void Execute()
+    {
+        document.BoldSelection();
+    }
+
+    public void UndoExecute()
+    {
+        document.Text = previousText;
+    }
+}
+class CommandManager
+{
+    private Stack<ICommand> commandUndoStack = new Stack<ICommand>();
+    private Stack<ICommand> commandRedoStack = new Stack<ICommand>();
+
+    public void ExecuteCommand(ICommand cmd)
+    {
+        cmd.Execute();
+        commandUndoStack.Push(cmd);
+    }
+
+    public void Undo()
+    {
+        if (commandUndoStack.Count > 0)
+        {
+            ICommand cmd = commandUndoStack.Pop();
+            cmd.UndoExecute();
+            commandRedoStack.Push(cmd);
+              
+        }
+    }
+
+    public void Redo()
+    {
+        if (commandRedoStack.Count > 0)
+        {
+            ICommand cmd = commandRedoStack.Pop();
+            cmd.Execute();
+            commandUndoStack.Push(cmd);
+        }
+    }
+}
+private CommandManager commandManager;
+private Document document;
+public Form1()
+{
+    InitializeComponent();
+
+    document = new Document(this.textBox1);
+    commandManager = new CommandManager();
+}
+
+private void btnBold_Click(object sender, EventArgs e)
+{
+    ICommand boldCommand = new BoldCommand(document);
+    commandManager.ExecuteCommand(boldCommand);
+}
+
+private void btnItalic_Click(object sender, EventArgs e)
+{
+    ICommand italicCommand = new ItalicizeCommand(document);
+    commandManager.ExecuteCommand(italicCommand);
+}
+
+private void btnUnderLine_Click(object sender, EventArgs e)
+{
+    ICommand underLineCommand = new UnderlineCommand(document);
+    commandManager.ExecuteCommand(underLineCommand);
+}
+
+private void btnRedo_Click(object sender, EventArgs e)
+{
+    commandManager.Redo();
+}
+
+private void btnUndo_Click(object sender, EventArgs e)
+{
+    commandManager.Undo();
+}
